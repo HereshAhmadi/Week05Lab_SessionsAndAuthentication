@@ -9,16 +9,24 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import Models.User;
 import javax.servlet.http.HttpSession;
-import javax.websocket.Session;
 
 public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
         
-                    getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
+        if(request.getAttribute("logout") != null){
+            session.invalidate();
+            request.setAttribute("message", "You have been logged out");
+            getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
 
+        }else if(session.getAttribute("username") != null){
+           response.sendRedirect("home");
+        }else{
+             getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
+        }
     }
 
  
@@ -51,8 +59,7 @@ public class LoginServlet extends HttpServlet {
                  request.setAttribute("password", password);
                  request.setAttribute("message", message);
                  
-                 
-                 getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
+                getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
              }
         }
     }
